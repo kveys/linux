@@ -6,6 +6,7 @@
 # Aantekeningen:                                                                      #
 # Dit script wordt gebruikt om de laatste wijzigingsdatum van bestanden op te sporen. #
 #                                                                                     #
+# 11/10/2019: removed unused options                                                  #
 # 28/09/2015: optie -t  en MAIL toegevoegd                                            #
 # 02/12/2014: opties -u en -g toegevoegd                                              #
 # 07/02/2014: script herwerkt met opties -post                                        #
@@ -13,13 +14,12 @@
 #######################################################################################
 
 OUTF=/tmp/modfinder.log
-POST=/shares/postkantoor
 MAIL=0
 
 swaks=/usr/local/bin/swaks
-mailfrom=security@schaubroeck.be
-mailto=kve@schaubroeck.be
-mailsrv=mail2
+mailfrom=account@gmail.com
+mailto=you@gmail.com
+mailsrv=your.mail.server
 
 clear
 
@@ -35,9 +35,7 @@ echo "Het resultaat schrijven we weg naar $OUTF" | tee -a $OUTF
 echo ""
 
 
-if [ "$1" == "-post" ];then
-        find $POST -type f -iname '*.pst' -printf %Td/%Tm/%TY-%TH:%TM\\t%P\\t%u\\t%m\\n| sort --key=1.7,1.10 --key=1.4,1.5 -n --key=1.1,1.2 -n| tee -a $OUTF
-elif [ "$2" == "-u" ];then
+if [ "$2" == "-u" ];then
         find $1 -type f -printf %Td/%Tm/%TY-%TH:%TM\\t%P\ \[u:%u\]\\n| sort --key=1.7,1.10 --key=1.4,1.5 -n --key=1.1,1.2 -n| tee -a $OUTF
 elif [ "$2" == "-g" ];then
         find $1 -type f -printf %Td/%Tm/%TY-%TH:%TM\\t%P\ \[g:%g\]\\n| sort --key=1.7,1.10 --key=1.4,1.5 -n --key=1.1,1.2 -n| tee -a $OUTF
