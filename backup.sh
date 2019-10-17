@@ -11,6 +11,7 @@
 
 #program
 gzip=/bin/gzip
+rm=/bin/rm
 tar=/bin/tar
 s3=/usr/local/bin/s3cmd
 
@@ -86,7 +87,7 @@ for host in $hosts2backup; do
 	s3result=$?
 	if [ "$s3result" == 0 ];then
 		echo -e "`now` S3: uploaded TAR.GZfile successfully" | tee -a $logfile
-		rm -f $dir2bu2/`echo $host`_$timestamp.tar.gz
+		$rm -f $dir2bu2/`echo $host`_$timestamp.tar.gz
 		rmresult=$?
 			if [ "$rmresult" == 0 ];then
 				echo -e "`now` RM: TAR.GZfile successfully removed from $dir2bu2" | tee -a $logfile
@@ -99,14 +100,6 @@ for host in $hosts2backup; do
 		echo -e "`now` S3: TAR.GZfile is still in $dir2bu2" | tee -a $logfile
 	fi
 
-done
-
-echo -e "`now`;script end" | tee -a $logfile
-echo -e "==================================================================="  | tee -a $logfile
-			echof $dir2bu2/`echo $host`_$timestamp.tar.gz
-		else
-			echo -e "`now` S3: uploaded TAR.GZfile NOT! successfully" | tee -a $logfile
-		fi
 done
 
 echo -e "`now`;script end" | tee -a $logfile
