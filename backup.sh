@@ -32,7 +32,7 @@ dir2bu2=/tmp/test
 
 # S3 
 s3=/usr/bin/s3cmd
-s3cfg=/var/www/dokuwiki/bin/custom/linux/.s3cfg
+s3cfg=/root/.s3cfg
 s3bucket="backup.bucky"
 
 #script preparation
@@ -88,7 +88,7 @@ for host in $hosts2backup; do
 		if [ "$s3result" == 0 ];then
 			echo -e "`now` S3: uploaded TAR.GZfile successfully" | tee -a $logfile
 		else
-			echo -e "`now` S3: uploaded TAR.GZfile unsuccessfully" | tee -a $logfile
+			echo -e "`now` S3: uploaded TAR.GZfile NOT! successfully" | tee -a $logfile
 		fi
 done
 
