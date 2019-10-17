@@ -1,11 +1,12 @@
 #!/bin/bash
-# 
+#
 # create a backup to Amazon S3
-# to do: bedoeling is om een generiek backup script te maken waarbij:
-# per applicatie een bestand.lst wordt geprocessed
-# waarin de directories staan
-# per applicatie 1 tarbestand dat dan naar s3 bucket wordt geupload.
-# 
+#
+# Author: Koen Veys
+# script is maintained in https://github.com/kveys/linux/backup.sh
+# documenation is at: https://dwkoen.ddns.net/doku.php?id/linux:backup.sh
+
+#
 # Setting variables 
 
 #program
