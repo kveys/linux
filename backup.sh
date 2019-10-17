@@ -9,15 +9,20 @@
 # Setting variables 
 
 #program
-tar=/bin/tar
 gzip=/bin/gzip
+tar=/bin/tar
+s3=/usr/local/bin/s3cmd
 
 #global
-temp=/tmp
-bindir=/var/www/dokuwiki/bin/custom/linux
+bindir=/usr/local/bin/backup/
 hostdir=$bindir/hosts
 logdir=$bindir/log
 logfile=$logdir/backup.log
+dir2bu2=/tmp/test
+
+# S3 specific 
+s3cfg=/root/.s3cfg
+s3bucket="backup.bucky"
 
 #functions
 
@@ -27,15 +32,10 @@ date +"%d%m%Y_%H%M"
 }
 
 
-#backup
-dir2bu2=/tmp/test
+######################
+# script preparation #
+######################
 
-# S3 
-s3=/usr/bin/s3cmd
-s3cfg=/root/.s3cfg
-s3bucket="backup.bucky"
-
-#script preparation
 if ! [ -d $logdir ];then
         mkdir $logdir
 fi
@@ -52,9 +52,7 @@ echo -e "`now`;script start" | tee -a $logfile
 
 #reading dirs to backup
 hosts2backup=$(find $hostdir -type f -printf %f\ )
-echo "hosts to backup: $hosts2backup"
 
-echo "folders to backup:"
 #create timestamp	
 timestamp=`now`
 
@@ -93,3 +91,4 @@ for host in $hosts2backup; do
 done
 
 echo -e "`now`;script end" | tee -a $logfile
+echo -e "==================================================================="  | tee -a $logfile
