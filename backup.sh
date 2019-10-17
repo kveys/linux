@@ -10,49 +10,86 @@
 
 #program
 tar=/bin/tar
+gzip=/bin/gzip
 
 #global
 temp=/tmp
-logdir=/tmp
+bindir=/var/www/dokuwiki/bin/custom/linux
+hostdir=$bindir/hosts
+logdir=$bindir/log
 logfile=$logdir/backup.log
 
+#functions
+
+#timestamp
 now(){
-date +"%d/%m/%Y_%H:%M:%S"
+date +"%d%m%Y_%H%M"
 }
 
 
 #backup
-apps2backup=$(find . -name '*.lst' -printf %f\ )
 dir2bu2=/tmp/test
-bufile=
 
 # S3 
 s3=/usr/bin/s3cmd
-s3config=/var/www/dokuwiki/bin/custom/linux/.s3cfg
-s3bucket=
+s3cfg=/var/www/dokuwiki/bin/custom/linux/.s3cfg
+s3bucket="backup.bucky"
 
-#start of script
+#script preparation
+if ! [ -d $logdir ];then
+        mkdir $logdir
+fi
+
+if ! [ -f $logfile ];then
+        touch $logfile
+fi
+
+###################
+# start of script #
+###################
+
 echo -e "`now`;script start" | tee -a $logfile
 
 #reading dirs to backup
-echo $apps2backup
-for file in $apps2backup; do
-	echo processing $file
-	for dir in `cat $file`; do
-		echo "backing up $dir"
-#		$tar -cvzf $dir2bu2/`echo $now`.tar.gz $dir 
+hosts2backup=$(find $hostdir -type f -printf %f\ )
+echo "hosts to backup: $hosts2backup"
+
+echo "folders to backup:"
+#create timestamp	
+timestamp=`now`
+
+for host in $hosts2backup; do
+	echo processing $host| tee -a $logfile
+
+	#creating TAR file
+	$tar -cf $dir2bu2/`echo $host`_$timestamp.tar --files-from /dev/null
+	for dir in `cat $hostdir/$host`; do
+		$tar -rf $dir2bu2/`echo $host`_$timestamp.tar $dir 
+		tarresult=$?
+		if [ "$tarresult" == 0 ];then
+			echo -e "`now` TAR: added $dir successfully" | tee -a $logfile
+		else
+			echo -e "`now` TAR: added $dir NOT! successfully" | tee -a $logfile
+		fi
 	done
+
+	#zipping TAR file
+	$gzip $dir2bu2/`echo $host`_$timestamp.tar
+	gzipresult=$?
+		if [ "$gzipresult" == 0 ];then
+			echo -e "`now` GZIP: gzipped TARfile successfully" | tee -a $logfile
+		else
+			echo -e "`now` GZIP: gzipped TARfile NOT! successfully" | tee -a $logfile
+		fi
+
+	#uploading TAR.GZ file
+	$s3 -c $s3cfg put $dir2bu2/`echo $host`_$timestamp.tar.gz s3://$s3bucket
+	s3result=$?
+		if [ "$s3result" == 0 ];then
+			echo -e "`now` S3: uploaded TAR.GZfile successfully" | tee -a $logfile
+		else
+			echo -e "`now` S3: uploaded TAR.GZfile unsuccessfully" | tee -a $logfile
+		fi
 done
-	
-#creating TAR file
-#$tar -cvzf $dir2bu2/$today.tar.gz $dir 
-#tarresult=$?
-#if [ "$tarresult" == 0 ];then
-#	echo -e "`now` tar created successfully" | tee -a $logfile
-#else
-#	echo -e "`now` tar created NOT successfully" | tee -a $logfile
-#fi
 
-#uploading TAR file
-#$s3 put  [FILE...] s3://BUCKET[/PREFIX]
-
+echo -e "`now`;script end" | tee -a $logfile
