@@ -1,4 +1,4 @@
-#create script to automate HandBrake actions
+#create script to automate HandBrake dvd ripping. 
 # we want to automate:
 # * creating directories for series
 # eg: season 1 - 10
