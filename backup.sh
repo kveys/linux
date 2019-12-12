@@ -20,7 +20,7 @@ bindir=/usr/local/bin/backup/
 hostdir=$bindir/hosts
 logdir=$bindir/log
 logfile=$logdir/backup.log
-dir2bu2=/tmp/test
+dir2bu2=/tmp
 
 # S3 specific 
 s3cfg=/root/.s3cfg
