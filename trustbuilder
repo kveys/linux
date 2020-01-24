@@ -1,0 +1,29 @@
+## Sudoers file for Trustbuilder administators
+## allowing specific set of commands to be run with root privileges
+##
+## Trustbuilder Services
+##
+## Tomcat service
+## Cmnd_Alias TOMCATSRV = /usr/bin/systemctl status tomcat-core, /usr/bin/systemctl start tomcat-core
+Cmnd_Alias TOMCATSRV = /usr/bin/systemctl status tomcat-core, /usr/bin/systemctl start tomcat-core
+Cmnd_Alias TOMCATSRV2 = /usr/bin/systemctl stop tomcat-core, /usr/bin/systemctl restart tomcat-core
+
+##
+## MariaDB service
+Cmnd_Alias MARIADBSRV = /usr/bin/systemctl status mariadb, /usr/bin/systemctl start mariadb
+Cmnd_Alias MARIADBSRV2 = /usr/bin/systemctl stop mariadb, /usr/bin/systemctl restart mariadb
+
+##
+## Gateway service
+Cmnd_Alias GATEWAYSRV = /usr/bin/systemctl status tb-gw-default, /usr/bin/systemctl start tb-gw-default
+Cmnd_Alias GATEWAYSRV2 = /usr/bin/systemctl stop tb-gw-default, /usr/bin/systemctl restart tb-gw-default
+
+##
+## Redis service
+Cmnd_Alias REDISSRV = /usr/bin/systemctl status redis, /usr/bin/systemctl start redis
+Cmnd_Alias REDISSRV2 = /usr/bin/systemctl stop redis, /usr/bin/systemctl restart redis
+
+
+### Since authentiaction is based on PKI, no password is needed (yet).
+%trustbuilderro  ALL=(ALL)	NOPASSWD: TOMCATSRV,MARIADBSRV,GATEWAYSRV,REDISSRV
+%trustbuilderrw  ALL=(ALL)	NOPASSWD: TOMCATSRV,MARIADBSRV,GATEWAYSRV,REDISSRV,TOMCATSRV2,MARIADBSRV2,GATEWAYSRV2,REDISSRV2
